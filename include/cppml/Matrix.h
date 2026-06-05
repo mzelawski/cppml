@@ -29,16 +29,19 @@ namespace cppml
 		Matrix& operator*=(Matrix const& other);
 		Matrix& operator/=(Matrix const& other);
 		Matrix transpose() const;
-		Matrix insert_row(size_t idx, Vector vals);
-		Matrix insert_column(size_t idx, Vector vals);
+		Matrix insert_row(size_t idx, Vector vals) const;
+		Matrix insert_column(size_t idx, Vector vals) const;
 	};
 
 	Matrix operator+(Matrix lhs, Matrix const& rhs);
 	Matrix operator-(Matrix lhs, Matrix const& rhs);
 	Matrix operator*(Matrix lhs, Matrix const& rhs);
 	Matrix operator/(Matrix lhs, Matrix const& rhs);
+	Matrix matmul(double lhs, Matrix const& rhs);
+	Matrix matmul(Matrix const& lhs, double rhs);
 	Matrix matmul(Matrix const& lhs, Matrix const& rhs);
 	Vector matmul(Matrix const& lhs, Vector const& rhs);
 	Vector matmul(Vector const& lhs, Matrix const& rhs);
 	std::ostream& operator<<(std::ostream& os, Matrix const& x);
+	Matrix identity_matrix(size_t n);
 }

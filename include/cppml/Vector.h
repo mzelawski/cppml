@@ -24,13 +24,16 @@ namespace cppml
 		Vector& operator-=(Vector const& other);
 		Vector& operator*=(Vector const& other);
 		Vector& operator/=(Vector const& other);
-		Vector insert(size_t idx, double val);
+		Vector insert(size_t idx, double val) const;
+		double norm(long long p) const;
 	};
 
 	Vector operator+(Vector lhs, Vector const& rhs);
 	Vector operator-(Vector lhs, Vector const& rhs);
 	Vector operator*(Vector lhs, Vector const& rhs);
 	Vector operator/(Vector lhs, Vector const& rhs);
+	Vector matmul(double lhs, Vector const& rhs);
+	Vector matmul(Vector const& lhs, double rhs);
 	double matmul(Vector const& lhs, Vector const& rhs);
 	std::ostream& operator<<(std::ostream& os, Vector const& v);
 }

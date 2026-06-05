@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <ostream>
+#include <cmath>
 
 namespace cppml
 {
@@ -82,7 +83,7 @@ namespace cppml
 		return *this;
 	}
 
-	Vector Vector::insert(size_t idx, double val)
+	Vector Vector::insert(size_t idx, double val) const
 	{
 		if (idx > size())
 			throw std::invalid_argument("The index must be less than or equal to the size.");
@@ -99,6 +100,14 @@ namespace cppml
 		}
 
 		return res;
+	}
+
+	double Vector::norm(long long p) const
+	{
+		double sum = 0.0;
+		for (auto data_i : data_)
+			sum += abs(pow(data_i, p));
+		return pow(sum, 1.0/(double)p);
 	}
 
 	Vector operator+(Vector lhs, Vector const& rhs)
@@ -119,6 +128,19 @@ namespace cppml
 	Vector operator/(Vector lhs, Vector const& rhs)
 	{
 		return lhs /= rhs;
+	}
+
+	Vector matmul(double lhs, Vector const& rhs)
+	{
+		Vector res(rhs.size(), 0.0);
+		for (size_t i = 0; i < res.size(); i++)
+			res[i] = lhs*rhs[i];
+		return res;
+	}
+
+	Vector matmul(Vector const& lhs, double rhs)
+	{
+		return matmul(rhs, lhs);
 	}
 
 	double matmul(Vector const& lhs, Vector const& rhs)

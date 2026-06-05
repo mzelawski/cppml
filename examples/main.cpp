@@ -19,10 +19,6 @@ long long measure_time(std::function<void()> const& f)
 
 int main()
 {
-	auto& rnd = cppml::get_random();
-	rnd.change_seed(67);
-	auto s = cppml::floyds_sampling_algorithm(-10, 10, 5);
-	int a = 0;
-	int x = 0;
-	std::cout << 67;
+	cppml::Vector v = { 6, 8 };
+	std::cout << v.norm(2);
 }

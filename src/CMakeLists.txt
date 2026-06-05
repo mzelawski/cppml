@@ -6,6 +6,8 @@
     LinearRegression.cpp
     Random.cpp
     KMeans.cpp
+    RidgeRegression.cpp
+    KDTree.cpp
 )
 
 add_library(cppml STATIC ${SOURCES})

@@ -11,7 +11,7 @@ namespace cppml
 {
 	Matrix::Matrix() : rows_(0), cols_(0) {}
 
-	Matrix::Matrix(size_t rows, size_t cols, double val) : rows_(rows), cols_(cols), data_(rows*cols, val) {}
+	Matrix::Matrix(size_t rows, size_t cols, double val) : rows_(rows), cols_(cols), data_(rows* cols, val) {}
 
 	Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 	{
@@ -77,7 +77,7 @@ namespace cppml
 
 		for (size_t i = 0; i < data_.size(); i++)
 			data_[i] += other.data_[i];
-		
+
 		return *this;
 	}
 
@@ -124,7 +124,7 @@ namespace cppml
 		return res;
 	}
 
-	Matrix Matrix::insert_row(size_t idx, Vector vals)
+	Matrix Matrix::insert_row(size_t idx, Vector vals) const
 	{
 		if (idx > rows_)
 			throw std::invalid_argument("The index must be less than or equal to the number of rows");
@@ -146,7 +146,7 @@ namespace cppml
 		return res;
 	}
 
-	Matrix Matrix::insert_column(size_t idx, Vector vals)
+	Matrix Matrix::insert_column(size_t idx, Vector vals) const
 	{
 		if (idx > cols_)
 			throw std::invalid_argument("The index must be less than or equal to the number of columns");
@@ -186,6 +186,21 @@ namespace cppml
 	Matrix operator/(Matrix lhs, Matrix const& rhs)
 	{
 		return lhs /= rhs;
+	}
+
+	Matrix matmul(double lhs, Matrix const& rhs)
+	{
+		auto [n, m] = rhs.shape();
+		Matrix res(n, m, 0.0);
+		for (size_t i = 0; i < n; i++)
+			for (size_t j = 0; j < m; j++)
+				res(i, j) = lhs * rhs(i, j);
+		return res;
+	}
+
+	Matrix matmul(Matrix const& lhs, double rhs)
+	{
+		return matmul(rhs, lhs);
 	}
 
 	Matrix matmul(Matrix const& lhs, Matrix const& rhs)
@@ -253,5 +268,14 @@ namespace cppml
 		}
 
 		return os;
+	}
+
+	Matrix identity_matrix(size_t n)
+	{
+		Matrix res(n, n, 0.0);
+		for (size_t i = 0; i < n; i++)
+			res(i, i) = 1.0;
+
+		return res;
 	}
 }
