@@ -1,8 +1,12 @@
-﻿// cppml.h: plik dołączany dla standardowych systemowych plików dołączanych,
-// lub pliki dołączane specyficzne dla projektu.
+﻿#pragma once
 
-#pragma once
-
-#include <iostream>
-
-// TODO: W tym miejscu przywołaj dodatkowe nagłówki wymagane przez program.
+#include "Vector.h"
+#include "Matrix.h"
+#include "Random.h"
+#include "math_utils.h"
+#include "LinearRegression.h"
+#include "RidgeRegression.h"
+#include "KMeans.h"
+#include "KDTree.h"
+#include "BallTree.h"
+#include "KNN.h"

@@ -8,6 +8,8 @@
     KMeans.cpp
     RidgeRegression.cpp
     KDTree.cpp
+    BallTree.cpp
+    KNN.cpp
 )
 
 add_library(cppml STATIC ${SOURCES})

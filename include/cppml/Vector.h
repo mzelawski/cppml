@@ -36,4 +36,5 @@ namespace cppml
 	Vector matmul(Vector const& lhs, double rhs);
 	double matmul(Vector const& lhs, Vector const& rhs);
 	std::ostream& operator<<(std::ostream& os, Vector const& v);
+	double distance(Vector const& v1, Vector const& v2, long long p);
 }

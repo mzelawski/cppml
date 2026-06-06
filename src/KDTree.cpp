@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <cmath>
 
 namespace cppml
 {
@@ -11,8 +12,7 @@ namespace cppml
 	{
 		if (indices.size() <= leaf_size_)
 		{
-			for (size_t idx : indices)
-				v->indices.push_back(idx);
+			v->indices = indices;
 			return;
 		}
 
@@ -41,6 +41,7 @@ namespace cppml
 			points_d[i] = points_[indices[i]][v->d];
 
 		double median = quickselect(points_d, points_d.size() / 2);
+		v->pivot = median;
 		
 		std::vector<size_t> indices_left, indices_right;
 		for (size_t idx : indices)
@@ -85,6 +86,44 @@ namespace cppml
 		}
 	}
 
+	void KDTree::query_node(Node* v, Vector const& point, std::priority_queue<std::pair<double, size_t>>& pq, size_t neighbors) const
+	{
+		if (v->left && v->right)
+		{
+			if (point[v->d] < v->pivot)
+			{
+				query_node(v->left, point, pq, neighbors);
+
+				double axis_dist = std::abs(point[v->d] - v->pivot);
+				if (pq.size() < neighbors || axis_dist < pq.top().first)
+					query_node(v->right, point, pq, neighbors);
+			}
+			else
+			{
+				query_node(v->right, point, pq, neighbors);
+
+				double axis_dist = std::abs(point[v->d] - v->pivot);
+				if (pq.size() < neighbors || axis_dist < pq.top().first)
+					query_node(v->left, point, pq, neighbors);
+			}
+		}
+		else if (v->left && !v->right)
+			query_node(v->left, point, pq, neighbors);
+		else if (!v->left && v->right)
+			query_node(v->right, point, pq, neighbors);
+
+		for (size_t idx : v->indices)
+		{
+			double dist = distance(points_[idx], point, norm_);
+			if (pq.size() < neighbors || dist < pq.top().first)
+			{
+				pq.push({ dist, idx });
+				if (pq.size() > neighbors)
+					pq.pop();
+			}
+		}
+	}
+
 	void KDTree::free(Node* v)
 	{
 		if (v->left)
@@ -94,11 +133,12 @@ namespace cppml
 		delete v;
 	}
 
-	KDTree::KDTree(Matrix const& X, size_t leaf_size) : leaf_size_(leaf_size), root_(new Node)
+	KDTree::KDTree() : leaf_size_(0), norm_(0), root_(new Node) {}
+
+	KDTree::KDTree(Matrix const& X, size_t leaf_size, long long norm) : leaf_size_(leaf_size), norm_(norm), root_(new Node), points_(X.shape().first, Vector(X.shape().second, 0.0))
 	{
 		auto [n, m] = X.shape();
 
-		points_ = std::vector<Vector>(n, Vector(m, 0.0));
 		for (size_t i = 0; i < n; i++)
 			for (size_t j = 0; j < m; j++)
 				points_[i][j] = X(i, j);
@@ -110,7 +150,7 @@ namespace cppml
 		build(root_, indices);
 	}
 
-	KDTree::KDTree(KDTree const& other) : leaf_size_(other.leaf_size_), root_(new Node), points_(other.points_)
+	KDTree::KDTree(KDTree const& other) : leaf_size_(other.leaf_size_), norm_(other.norm_), root_(new Node), points_(other.points_)
 	{
 		copy(root_, other.root_);
 	}
@@ -121,6 +161,7 @@ namespace cppml
 			return *this;
 
 		leaf_size_ = other.leaf_size_;
+		norm_ = other.norm_;
 		points_ = other.points_;
 
 		free(root_);
@@ -134,5 +175,23 @@ namespace cppml
 	KDTree::~KDTree()
 	{
 		free(root_);
+	}
+
+	std::vector<size_t> KDTree::query(Vector const& point, size_t neighbors) const
+	{
+		if (neighbors > points_.size())
+			throw std::invalid_argument("neighbors must equal to or less than the number of points.");
+
+		std::priority_queue<std::pair<double, size_t>> pq;
+		query_node(root_, point, pq, neighbors);
+		std::vector<size_t> res;
+		res.reserve(neighbors);
+		while (!pq.empty())
+		{
+			res.push_back(pq.top().second);
+			pq.pop();
+		}
+
+		return res;
 	}
 }

@@ -106,8 +106,8 @@ namespace cppml
 	{
 		double sum = 0.0;
 		for (auto data_i : data_)
-			sum += abs(pow(data_i, p));
-		return pow(sum, 1.0/(double)p);
+			sum += std::abs(pow(data_i, p));
+		return std::pow(sum, 1.0/(double)p);
 	}
 
 	Vector operator+(Vector lhs, Vector const& rhs)
@@ -161,5 +161,16 @@ namespace cppml
 			os << v[i] << ' ';
 		os << '\n';
 		return os;
+	}
+
+	double distance(Vector const& v1, Vector const& v2, long long p)
+	{
+		if (v1.size() != v2.size())
+			throw std::invalid_argument("Vector sizes must match.");
+
+		double sum = 0.0;
+		for (size_t i = 0; i < v1.size(); i++)
+			sum += std::pow(std::abs(v1[i] - v2[i]), p);
+		return pow(sum, 1.0 / (double)p);
 	}
 }
