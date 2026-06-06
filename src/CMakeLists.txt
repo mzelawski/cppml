@@ -1,5 +1,4 @@
 ﻿set(SOURCES
-    cppml.cpp
     Vector.cpp
     Matrix.cpp
     math_utils.cpp
