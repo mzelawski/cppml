@@ -88,6 +88,7 @@ namespace cppml
 		v->indices = u->indices;
 		v->left_pivot_idx = u->left_pivot_idx;
 		v->right_pivot_idx = u->right_pivot_idx;
+		v->radius = u->radius;
 
 		if (u->left)
 		{
