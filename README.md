@@ -9,7 +9,7 @@ First do
 ```bash
 git clone https://github.com/mzelawski/cppml.git
 ```
-in your project file. Then you have to add this line inside the global CMakeLists.txt file:
+in your project directory. Then you have to add this line inside the global CMakeLists.txt file:
 ```cmake
 add_subdirectory(cppml)
 ```
